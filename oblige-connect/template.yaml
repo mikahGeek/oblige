@@ -34,14 +34,14 @@ Globals: # https://docs.aws.amazon.com/serverless-application-model/latest/devel
 
 Resources:
     ConnectFunction:
-        Type: AWS::Serverless::Function # More info about Function Resource: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
+        Type: AWS::Serverless::Function 
         Properties:
             Handler: app.lambda_handler
             CodeUri: src/connect
             Description: Connect function
             Events:
                 ConnectPath:
-                    Type: Api # More info about API Event Source: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-api.html
+                    Type: Api 
                     Properties:
                         Path: /connect
                         Method: POST 
@@ -53,6 +53,25 @@ Resources:
             Tags:
                 LambdaPowertools: python
 
+    ConnectedFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            Handler: app.lambda_handler
+            CodeUri: src/connect
+            Description: Connected function
+            Events:
+                ConnectedPath:
+                    Type: Api
+                    Properties:
+                        Path: /connected/{source}/{dest}
+                        Method: GET
+            Environment:
+                Variables:
+                    AWS_REGION:
+                    AWS_ACCESS_KEY:
+                    AWS_SECRET_ACCESS_KEY:
+            Tags:
+                LambdaPowertools: python
 Outputs:
     ConnectApigwURL:
       Description: "API Gateway endpoint URL for Prod environment for Connect Function"
@@ -62,3 +81,10 @@ Outputs:
       Description: "Connect World Lambda Function ARN"
       Value: !GetAtt ConnectFunction.Arn
 
+    ConnectedApigwURL:
+      Description: "API Gateway endpoint URL for Prod environment for Connected Function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/connected"
+
+    ConnectedFunction:
+      Description: "Connected World Lambda Function ARN"
+      Value: !GetAtt ConnectedFunction.Arn

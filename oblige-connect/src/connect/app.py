@@ -19,6 +19,11 @@ def connect():
     id = db.log_connect_request('main', source, dest)
     return id
 
+@app.get("/connected/<source>/<dest>")
+@tracer.capture_method
+def connected(source, dest):
+    return db.get_connected('main', source, dest)
+
 @tracer.capture_lambda_handler
 @logger.inject_lambda_context(
     correlation_id_path=correlation_paths.API_GATEWAY_REST, log_event=True
