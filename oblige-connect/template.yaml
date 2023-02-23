@@ -47,7 +47,9 @@ Resources:
                         Method: POST 
             Environment:
                 Variables:
-                    PARAM1: VALUE
+                    AWS_REGION:
+                    AWS_ACCESS_KEY:
+                    AWS_SECRET_ACCESS_KEY:
             Tags:
                 LambdaPowertools: python
 
