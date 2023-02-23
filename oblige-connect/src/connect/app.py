@@ -9,23 +9,10 @@ metrics = Metrics(namespace="MyApp", service="APP")
 app = ApiGatewayResolver()
 
 
-@app.get("/hello/<name>")
+@app.post("/connect")
 @tracer.capture_method
-def hello_name(name):
-    tracer.put_annotation(key="User", value=name)
-    logger.info(f"Request from {name} received")
-    metrics.add_metric(name="SuccessfulGreetings", unit=MetricUnit.Count, value=1)
-    return {"message": f"hello {name}!"}
-
-
-@app.get("/hello")
-@tracer.capture_method
-def hello():
-    tracer.put_annotation(key="User", value="unknown")
-    logger.info("Request from unknown received")
-    metrics.add_metric(name="SuccessfulGreetings", unit=MetricUnit.Count, value=1)
-    return {"message": "hello unknown!"}
-
+def connect():
+    return app.current_event.json_body
 
 @tracer.capture_lambda_handler
 @logger.inject_lambda_context(

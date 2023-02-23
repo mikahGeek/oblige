@@ -22,7 +22,7 @@ all: clean build
 
 install:
 	$(info [*] Installing pipenv)
-	@pip install pipenv --upgrade -i https://pypi.org/simple
+	@pip install pipenv --upgrade
 	$(MAKE) dev
 
 dev:
@@ -47,8 +47,8 @@ invoke: ##=> Run SAM Local function with a given event payload
 
 run: ##=> Run SAM Local API GW and can optionally run new containers connected to a defined network
 	@test -z ${NETWORK} \
-		&& sam local start-api \
-		|| sam local start-api --docker-network ${NETWORK}
+		&& sam local start-api -n local.json \
+		|| sam local start-api -n local.json --docker-network ${NETWORK}
 
 test: ##=> Run pytest
 	POWERTOOLS_METRICS_NAMESPACE="MyServerlessApplication" $(PIPENV) run python -m pytest --cov . --cov-report term-missing --cov-fail-under $(CODE_COVERAGE) tests/ -vv
@@ -61,12 +61,12 @@ ci: ##=> Run full workflow - Install deps, build deps, and deploy
 hurry: ##=> Run full workflow
 	$(MAKE) install
 	$(MAKE) build
+        $(MAKE) deploy
 
 hurry.first: ##=> Run full workflow for the first time
 	$(MAKE) install
 	$(MAKE) build
 	$(MAKE) deploy.guided
-
 #############
 #  Helpers  #
 #############
