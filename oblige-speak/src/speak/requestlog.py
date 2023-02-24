@@ -2,7 +2,6 @@ import os
 import sys
 import json
 import boto3
-from boto3.dynamodb.conditions import Key
 import uuid
 
 client = boto3.client(
@@ -15,8 +14,8 @@ dynamodb = boto3.resource(
 
 def log_request(request):
   id = str(uuid.uuid4());
-  dynamodb.Table('oblige-speak-request').put_item(Item = {'topic': 'main', 'uuid': id, 'text': request});
+  dynamodb.Table('oblige_speak_request').put_item(Item = {'topic': 'main', 'uuid': id, 'text': request});
   return id;
 
 def log_response(response, requestid):
-  dynamodb.Table('oblige-speak-request').update_item(Key = {'topic': 'main', 'uuid': requestid}, UpdateExpression = "set response_text = :r", ExpressionAttributeValues={':r': response})
+  dynamodb.Table('oblige_speak_request').update_item(Key = {'topic': 'main', 'uuid': requestid}, UpdateExpression = "set response_text = :r", ExpressionAttributeValues={':r': response})

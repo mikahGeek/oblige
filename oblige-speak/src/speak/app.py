@@ -2,27 +2,40 @@ from aws_lambda_powertools import Logger, Metrics, Tracer
 from aws_lambda_powertools.event_handler.api_gateway import ApiGatewayResolver
 from aws_lambda_powertools.logging import correlation_paths
 from aws_lambda_powertools.metrics import MetricUnit
-
+import os
+import sys
+import openai
+import json
 import db
 
 logger = Logger(service="APP")
 tracer = Tracer(service="APP")
 metrics = Metrics(namespace="MyApp", service="APP")
 app = ApiGatewayResolver()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-
-@app.post("/connect")
+@app.post("/speak")
 @tracer.capture_method
-def connect():
-    source = app.current_event.json_body['source']
-    dest = app.current_event.json_body['dest']
-    id = db.log_connect_request('main', source, dest)
-    return id
+def speak():
+  # return openai's response to the 'text' field
+  input = app.current_event.json_body['text'];
+  id = db.log_request(input);
+  response = openai.Completion.create(
+    model="text-davinci-003",
+    prompt=generate_prompt(input),
+    temperature=0,
+    max_tokens=1500
+  )
+  text = '';
+  for choice in response.choices:
+    text = choice.text + ' ';
+  db.log_response(text, id)
+  return text;
 
-@app.get("/connected/<source>/<dest>")
-@tracer.capture_method
-def connected(source, dest):
-    return db.get_connected('main', source, dest)
+def generate_prompt(input):
+    return """
+      Text: {}
+      Responses:""".format( input.capitalize() )
 
 @tracer.capture_lambda_handler
 @logger.inject_lambda_context(

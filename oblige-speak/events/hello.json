@@ -1,8 +1,8 @@
 {
-    "body": "hello",
-    "resource": "/hello",
-    "path": "/hello",
-    "httpMethod": "GET",
+    "body": "speak",
+    "resource": "/speak",
+    "path": "/speak",
+    "httpMethod": "POST",
     "isBase64Encoded": true,
     "queryStringParameters": {
         "foo": "bar"
@@ -13,7 +13,7 @@
         ]
     },
     "pathParameters": {
-        "hello": "/hello"
+        "speak": "/speak"
     },
     "stageVariables": {
         "baz": "qux"
@@ -114,8 +114,8 @@
             "userAgent": "Custom User Agent String",
             "user": null
         },
-        "path": "/Prod/hello",
-        "resourcePath": "/hello",
+        "path": "/Prod/speak",
+        "resourcePath": "/speak",
         "httpMethod": "POST",
         "apiId": "1234567890",
         "protocol": "HTTP/1.1"

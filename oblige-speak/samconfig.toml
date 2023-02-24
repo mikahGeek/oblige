@@ -2,9 +2,9 @@ version = 0.1
 [default]
 [default.deploy]
 [default.deploy.parameters]
-stack_name = "oblige-connect"
+stack_name = "oblige-speak"
 s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-13ph2fuoerjaw"
-s3_prefix = "oblige-connect"
+s3_prefix = "oblige-speak"
 region = "us-east-2"
 capabilities = "CAPABILITY_IAM"
 image_repositories = []
