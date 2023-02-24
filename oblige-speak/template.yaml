@@ -1,0 +1,63 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+    oblige-speak
+
+Globals: # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-template-anatomy-globals.html
+    Api:
+        EndpointConfiguration: REGIONAL
+        TracingEnabled: true
+        Cors:                               # https://awslabs.github.io/aws-lambda-powertools-python/latest/core/event_handler/api_gateway/#cors
+            # AllowOrigin: "'https://example.com'"
+            AllowOrigin: "'*'"  # Dev only
+            AllowHeaders: "'Content-Type,Authorization,X-Amz-Date'"
+            MaxAge: "'300'"
+        BinaryMediaTypes:                   # https://awslabs.github.io/aws-lambda-powertools-python/latest/core/event_handler/api_gateway/#binary-responses
+          - '*~1*'  # converts to */* for any binary type
+    Function:
+        Timeout: 5
+        MemorySize: 256
+        Runtime: python3.9
+        Tracing: Active # https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html
+        # Embed Lambda Powertools as a shared Layer
+        # See: https://awslabs.github.io/aws-lambda-powertools-python/latest/#lambda-layer
+        Layers: # 
+            - !Sub arn:aws:lambda:${AWS::Region}:017000801446:layer:AWSLambdaPowertoolsPython:9
+        Environment:
+            Variables:
+                # Powertools env vars: https://awslabs.github.io/aws-lambda-powertools-python/#environment-variables
+                LOG_LEVEL: INFO
+                POWERTOOLS_LOGGER_SAMPLE_RATE: 0.1
+                POWERTOOLS_LOGGER_LOG_EVENT: true
+                POWERTOOLS_METRICS_NAMESPACE: MyServerlessApplication
+                POWERTOOLS_SERVICE_NAME: speak
+
+Resources:
+    SpeakFunction:
+        Type: AWS::Serverless::Function 
+        Properties:
+            Handler: app.lambda_handler
+            CodeUri: src/speak
+            Description: Speak function
+            Events:
+                SpeakPath:
+                    Type: Api 
+                    Properties:
+                        Path: /speak
+                        Method: POST 
+            Environment:
+                Variables:
+                    AWS_REGION:
+                    AWS_ACCESS_KEY:
+                    AWS_SECRET_ACCESS_KEY:
+            Tags:
+                LambdaPowertools: python
+
+Outputs:
+    SpeakApigwURL:
+      Description: "API Gateway endpoint URL for Prod environment for Speak Function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/speak"
+
+    SpeakFunction:
+      Description: "Speak World Lambda Function ARN"
+      Value: !GetAtt SpeakFunction.Arn
