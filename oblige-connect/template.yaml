@@ -47,11 +47,30 @@ Resources:
                         Method: POST 
             Environment:
                 Variables:
-                    AWS_REGION:
-                    AWS_ACCESS_KEY:
-                    AWS_SECRET_ACCESS_KEY:
+                  PARAM1: VALUE
             Tags:
                 LambdaPowertools: python
+    ConnectAdditionalPermission:
+        Type: "AWS::IAM::Policy"
+        Properties:
+            PolicyName: "root"
+            PolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                    -
+                        Effect: "Allow"
+                        Action: [
+                          "dynamodb:BatchGetItem",
+                          "dynamodb:GetItem",
+                          "dynamodb:Query",
+                          "dynamodb:Scan",
+                          "dynamodb:BatchWriteItem",
+                          "dynamodb:PutItem",
+                          "dynamodb:UpdateItem"
+                        ]
+                        Resource: "*"
+            Roles:
+               - !Ref ConnectFunctionRole # Sample policy to demonstrate Implicit IAM Role created with SAM
 
     ConnectedFunction:
         Type: AWS::Serverless::Function
@@ -67,11 +86,30 @@ Resources:
                         Method: GET
             Environment:
                 Variables:
-                    AWS_REGION:
-                    AWS_ACCESS_KEY:
-                    AWS_SECRET_ACCESS_KEY:
+                  PARAM1: VALUE
             Tags:
                 LambdaPowertools: python
+    ConnectedAdditionalPermission:
+        Type: "AWS::IAM::Policy"
+        Properties:
+            PolicyName: "root"
+            PolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                    -
+                        Effect: "Allow"
+                        Action: [
+                          "dynamodb:BatchGetItem",
+                          "dynamodb:GetItem",
+                          "dynamodb:Query",
+                          "dynamodb:Scan",
+                          "dynamodb:BatchWriteItem",
+                          "dynamodb:PutItem",
+                          "dynamodb:UpdateItem"
+                        ]
+                        Resource: "*"
+            Roles:
+               - !Ref ConnectedFunctionRole # Sample policy to demonstrate Implicit IAM Role created with SAM
 Outputs:
     ConnectApigwURL:
       Description: "API Gateway endpoint URL for Prod environment for Connect Function"

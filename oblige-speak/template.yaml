@@ -34,26 +34,44 @@ Globals: # https://docs.aws.amazon.com/serverless-application-model/latest/devel
 
 Resources:
     SpeakFunction:
-        Type: AWS::Serverless::Function 
+        Type: AWS::Serverless::Function
         Properties:
             Handler: app.lambda_handler
             CodeUri: src/speak
-            Description: Speak function
+            Description: Speak issues a request to talk with another service
             Events:
-                SpeakPath:
-                    Type: Api 
+                Connected:
+                    Type: Api
                     Properties:
                         Path: /speak
-                        Method: POST 
+                        Method: POST
             Environment:
                 Variables:
-                    AWS_REGION:
-                    AWS_ACCESS_KEY:
-                    AWS_SECRET_ACCESS_KEY:
-                    OPENAI_API_KEY:
+                  PARAM1: VALUE
+                  OPENAI_API_KEY: VALUE
             Tags:
                 LambdaPowertools: python
-
+    SpeakAdditionalPermission:
+        Type: "AWS::IAM::Policy"
+        Properties:
+            PolicyName: "root"
+            PolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                    -
+                        Effect: "Allow"
+                        Action: [
+                          "dynamodb:BatchGetItem",
+                          "dynamodb:GetItem",
+                          "dynamodb:Query",
+                          "dynamodb:Scan",
+                          "dynamodb:BatchWriteItem",
+                          "dynamodb:PutItem",
+                          "dynamodb:UpdateItem"
+                        ]
+                        Resource: "*"
+            Roles:
+               - !Ref SpeakFunctionRole # Sample policy to demonstrate Implicit IAM Role created with SAM
 Outputs:
     SpeakApigwURL:
       Description: "API Gateway endpoint URL for Prod environment for Speak Function"

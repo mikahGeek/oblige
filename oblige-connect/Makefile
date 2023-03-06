@@ -40,7 +40,7 @@ deploy.guided: ##=> Guided deploy that is typically run for the first time only
 	sam deploy --guided
 
 deploy: ##=> Deploy app using previously saved SAM CLI configuration
-	sam deploy
+	sam deploy 
 
 invoke: ##=> Run SAM Local function with a given event payload
 	@sam local invoke HelloWorldFunction --event events/hello.json
