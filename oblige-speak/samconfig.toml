@@ -8,3 +8,7 @@ s3_prefix = "oblige-speak"
 region = "us-east-2"
 capabilities = "CAPABILITY_IAM"
 image_repositories = []
+parameter_overrides=[
+  "OPENAI_API_KEY=Value1",
+  "TemplateInput2=Value2"
+]

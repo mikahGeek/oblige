@@ -7,17 +7,20 @@ import sys
 import openai
 import json
 import db
+import boto3
 
 logger = Logger(service="APP")
 tracer = Tracer(service="APP")
 metrics = Metrics(namespace="MyApp", service="APP")
 app = ApiGatewayResolver()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+
+ssm = boto3.client('ssm')
 
 @app.post("/speak")
 @tracer.capture_method
 def speak():
   # return openai's response to the 'text' field
+  openai.api_key = ssm.get_parameter(Name='OPENAI_API_KEY')['Parameter']['Value']
   input = app.current_event.json_body['text'];
   id = db.log_request(input);
   response = openai.Completion.create(
@@ -30,7 +33,7 @@ def speak():
   for choice in response.choices:
     text = choice.text + ' ';
   db.log_response(text, id)
-  return text;
+  return {"response": text}
 
 def generate_prompt(input):
     return """

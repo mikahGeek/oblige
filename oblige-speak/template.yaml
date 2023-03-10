@@ -32,6 +32,7 @@ Globals: # https://docs.aws.amazon.com/serverless-application-model/latest/devel
                 POWERTOOLS_METRICS_NAMESPACE: MyServerlessApplication
                 POWERTOOLS_SERVICE_NAME: speak
 
+
 Resources:
     SpeakFunction:
         Type: AWS::Serverless::Function
@@ -45,10 +46,8 @@ Resources:
                     Properties:
                         Path: /speak
                         Method: POST
-            Environment:
-                Variables:
-                  PARAM1: VALUE
-                  OPENAI_API_KEY: VALUE
+            # Environment:
+            #   Variables:
             Tags:
                 LambdaPowertools: python
     SpeakAdditionalPermission:
@@ -70,8 +69,15 @@ Resources:
                           "dynamodb:UpdateItem"
                         ]
                         Resource: "*"
+                    -
+                        Effect: "Allow"
+                        Action: [
+                          "ssm:GetParameter"
+                        ]
+                        Resource: "*"
             Roles:
                - !Ref SpeakFunctionRole # Sample policy to demonstrate Implicit IAM Role created with SAM
+
 Outputs:
     SpeakApigwURL:
       Description: "API Gateway endpoint URL for Prod environment for Speak Function"

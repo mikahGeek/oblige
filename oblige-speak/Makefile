@@ -37,10 +37,10 @@ build: ##=> Same as package except that we don't create a ZIP
 	sam build --use-container
 
 deploy.guided: ##=> Guided deploy that is typically run for the first time only
-	sam deploy --guided
+	sam deploy --parameter-overrides $(shell cat .ssm-params) --guided
 
 deploy: ##=> Deploy app using previously saved SAM CLI configuration
-	sam deploy
+	sam deploy --parameter-overrides $(shell cat .ssm-params)
 
 invoke: ##=> Run SAM Local function with a given event payload
 	@sam local invoke HelloWorldFunction --event events/hello.json
